@@ -29,8 +29,7 @@ class UrlPathListener
      */
     public function onHtmlLoaded(HtmlEvent $event)
     {
-        $dom = new \DOMDocument();
-        $dom->loadHTML($event->getHtml());
+        $dom = $event->getHtml();
 
         $scheme = $this->layouts[$event->getLayout()]['source']['scheme'];
         $host = $scheme . '://' . $this->layouts[$event->getLayout()]['source']['host'];
@@ -50,8 +49,6 @@ class UrlPathListener
         foreach ($dom->getElementsByTagName('img') as $anchor) {
             $this->replaceHref($anchor, 'src', $host);
         }
-
-        $event->setHtml($dom->saveHTML());
     }
 
     /**

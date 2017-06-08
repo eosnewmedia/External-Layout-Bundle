@@ -1,4 +1,5 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle\Listener;
 
 use Enm\Bundle\ExternalLayoutBundle\Event\HtmlEvent;
@@ -13,8 +14,9 @@ class HtmlTwigListener
      */
     public function replaceTwigTags(HtmlEvent $event)
     {
-        $event->setHtml(
-          str_replace(['<twig>', '</twig>'], '', $event->getHtml())
-        );
+        $event->getHtml()
+            ->loadHTML(
+                str_replace(['<twig>', '</twig>'], '', $event->getHtml()->saveHTML())
+            );
     }
 }

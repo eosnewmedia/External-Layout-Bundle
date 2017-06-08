@@ -1,4 +1,5 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle\BlockBuilder;
 
 use Symfony\Component\CssSelector\CssSelectorConverter;
@@ -9,75 +10,62 @@ use Symfony\Component\CssSelector\CssSelectorConverter;
 class BlockBuilder implements BlockBuilderInterface
 {
     /**
-     * BlockBuilder constructor.
-     */
-    public function __construct()
-    {
-        libxml_use_internal_errors(true);
-        libxml_disable_entity_loader(true);
-    }
-    
-    /**
      * Add a Twig Block as first child of the given selector
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $selector The css selector of the dom node under which the new block should be added
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function prependBlock($html, $selector, $block)
+    public function prependBlock(\DOMDocument $html, $selector, $block)
     {
-        $dom  = $this->loadHtmlToDom($html);
-        $node = $this->getSelectedNode($dom, $selector);
-        
+        $node = $this->getSelectedNode($html, $selector);
+
         $node->insertBefore(
-          $dom->createElement('twig', $this->buildTwigBlock($block)),
-          $node->firstChild
+            $html->createElement('twig', $this->buildTwigBlock($block)),
+            $node->firstChild
         );
-        
-        return $dom->saveHTML();
     }
-    
+
     /**
      * Add a Twig Block as last child of the given selector
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $selector The css selector of the dom node under which the new block should be added
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function appendBlock($html, $selector, $block)
+    public function appendBlock(\DOMDocument $html, $selector, $block)
     {
-        $dom  = $this->loadHtmlToDom($html);
-        $node = $this->getSelectedNode($dom, $selector);
-        
+        $node = $this->getSelectedNode($html, $selector);
+
         $node->appendChild(
-          $dom->createElement('twig', $this->buildTwigBlock($block))
+            $html->createElement('twig', $this->buildTwigBlock($block))
         );
-        
-        return $dom->saveHTML();
     }
-    
+
     /**
      * Replace a placeholder in the html with a twig block
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $placeholder The string to be replaced with the block
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function replaceWithBlock($html, $placeholder, $block)
+    public function replaceWithBlock(\DOMDocument $html, $placeholder, $block)
     {
-        return str_replace(
-          $placeholder,
-          '<twig>'.$this->buildTwigBlock($block).'</twig>',
-          $html
+        $html->loadHTML(
+            str_replace(
+                $placeholder,
+                '<twig>' . $this->buildTwigBlock($block) . '</twig>',
+                $html->saveHTML()
+            )
         );
     }
-    
+
     /**
      * @param string $block
      *
@@ -85,22 +73,9 @@ class BlockBuilder implements BlockBuilderInterface
      */
     private function buildTwigBlock($block)
     {
-        return '{% block '.$block.' %}{% endblock %}';
+        return '{% block ' . $block . ' %}{% endblock %}';
     }
-    
-    /**
-     * @param string $html
-     *
-     * @return \DOMDocument
-     */
-    private function loadHtmlToDom($html)
-    {
-        $dom = new \DOMDocument();
-        $dom->loadHTML($html);
-        
-        return $dom;
-    }
-    
+
     /**
      * @param \DOMDocument $dom
      * @param string $selector
@@ -110,8 +85,8 @@ class BlockBuilder implements BlockBuilderInterface
     private function getSelectedNode(\DOMDocument $dom, $selector)
     {
         $xPath = new \DOMXPath($dom);
-        
+
         return $xPath->query((new CssSelectorConverter())->toXPath($selector))
-                     ->item(0);
+            ->item(0);
     }
 }

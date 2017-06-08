@@ -9,33 +9,33 @@ interface BlockBuilderInterface
     /**
      * Add a Twig Block as first child of the given selector
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $selector The css selector of the dom node under which the new block should be added
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function prependBlock($html, $selector, $block);
-    
+    public function prependBlock(\DOMDocument $html, $selector, $block);
+
     /**
      * Add a Twig Block as last child of the given selector
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $selector The css selector of the dom node under which the new block should be added
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function appendBlock($html, $selector, $block);
-    
+    public function appendBlock(\DOMDocument $html, $selector, $block);
+
     /**
      * Replace a placeholder in the html with a twig block
      *
-     * @param string $html The current html string
+     * @param \DOMDocument|string $html The current html string
      * @param string $placeholder The string to be replaced with the block
      * @param string $block The block name
      *
-     * @return string The new html string
+     * @return void
      */
-    public function replaceWithBlock($html, $placeholder, $block);
+    public function replaceWithBlock(\DOMDocument $html, $placeholder, $block);
 }

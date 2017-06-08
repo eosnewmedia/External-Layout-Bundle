@@ -31,6 +31,11 @@ class LayoutService
     private $dispatcher;
 
     /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
      * @var string
      */
     private $layout;
@@ -79,6 +84,25 @@ class LayoutService
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        if (!$this->filesystem instanceof Filesystem) {
+            $this->filesystem = new Filesystem();
+        }
+        return $this->filesystem;
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     */
+    public function setFilesystem(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -145,22 +169,18 @@ class LayoutService
             ->getBlockBuilder($this->layout);
 
         foreach ($prepend as $block => $selector) {
-            $this->html->setHtml(
-                $builder->prependBlock(
-                    $this->html->getHtml(),
-                    $selector,
-                    $block
-                )
+            $builder->prependBlock(
+                $this->html->getHtml(),
+                $selector,
+                $block
             );
         }
 
         foreach ($append as $block => $selector) {
-            $this->html->setHtml(
-                $builder->appendBlock(
-                    $this->html->getHtml(),
-                    $selector,
-                    $block
-                )
+            $builder->appendBlock(
+                $this->html->getHtml(),
+                $selector,
+                $block
             );
         }
 
@@ -177,12 +197,10 @@ class LayoutService
         $builder = $this->getBlockBuilderRegistry()
             ->getBlockBuilder($this->layout);
         foreach ($config as $block => $placeholder) {
-            $this->html->setHtml(
-                $builder->replaceWithBlock(
-                    $this->html->getHtml(),
-                    $placeholder,
-                    $block
-                )
+            $builder->replaceWithBlock(
+                $this->html->getHtml(),
+                $placeholder,
+                $block
             );
         }
 
@@ -200,8 +218,8 @@ class LayoutService
             $destinationDir .= '/';
         }
 
-        $fs = new Filesystem();
-        $fs->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml());
+        $this->getFilesystem()
+            ->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml()->saveHTML());
 
         return $this;
     }
