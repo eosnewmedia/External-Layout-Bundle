@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="enm.external_layout.source_loader_registry"
+                 class="Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry"/>
+
+        <service id="enm.external_layout.block_builder_registry"
+                 class="Enm\Bundle\ExternalLayoutBundle\BlockBuilder\BlockBuilderRegistry"/>
+
+        <service id="enm.external_layout.html_twig_listener"
+                 class="Enm\Bundle\ExternalLayoutBundle\Listener\HtmlTwigListener">
+            <tag name="kernel.event_listener" event="enm.external_layout.html_manipulated" method="replaceTwigTags"/>
+        </service>
+
+        <service id="enm.external_layout.url_path_listener"
+                 class="Enm\Bundle\ExternalLayoutBundle\Listener\UrlPathListener">
+            <argument>%enm.external_layout.layouts%</argument>
+            <tag name="kernel.event_listener" event="enm.external_layout.html_loaded" method="onHtmlLoaded"/>
+        </service>
+
+        <service id="enm.external_layout" class="Enm\Bundle\ExternalLayoutBundle\Service\LayoutService">
+            <argument type="service" id="enm.external_layout.source_loader_registry"/>
+            <argument type="service" id="enm.external_layout.block_builder_registry"/>
+            <argument type="service" id="event_dispatcher"/>
+        </service>
+
+        <service id="enm.external_layout.command.create_layouts"
+                 class="Enm\Bundle\ExternalLayoutBundle\Command\CreateLayoutsCommand">
+            <argument type="service" id="enm.external_layout"/>
+            <argument>%enm.external_layout.layouts%</argument>
+            <tag name="console.command"/>
+        </service>
+    </services>
+</container>
