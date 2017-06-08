@@ -26,6 +26,9 @@
             <argument type="service" id="enm.external_layout.source_loader_registry"/>
             <argument type="service" id="enm.external_layout.block_builder_registry"/>
             <argument type="service" id="event_dispatcher"/>
+            <call method="setFilesystem">
+                <argument type="service" id="filesystem" on-invalid="ignore"/>
+            </call>
         </service>
 
         <service id="enm.external_layout.command.create_layouts"

@@ -8,6 +8,7 @@ use Enm\Bundle\ExternalLayoutBundle\Events;
 use Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry;
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @author Philipp Marien <marien@eosnewmedia.de>
@@ -28,6 +29,11 @@ class LayoutService
      * @var EventDispatcherInterface
      */
     private $dispatcher;
+
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     /**
      * @var string
@@ -78,6 +84,25 @@ class LayoutService
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        if (!$this->filesystem instanceof Filesystem) {
+            $this->filesystem = new Filesystem();
+        }
+        return $this->filesystem;
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     */
+    public function setFilesystem(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -193,7 +218,8 @@ class LayoutService
             $destinationDir .= '/';
         }
 
-        $this->html->getHtml()->saveHTMLFile($destinationDir . $this->layout . '.html.twig');
+        $this->getFilesystem()
+            ->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml()->saveHTML());
 
         return $this;
     }
