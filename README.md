@@ -37,17 +37,17 @@ enm_external_layout:
                 scheme: "http" # scheme can be "http" or "https". "http" is the default
                 host: "www.your-domain.de"
                 path: "/" # path have to begin with "/", "/" is also the default
-                user: "[userName]"  # Optional parameter for htaccess. if set, it cant't be empty  
-                password: "[password]" # Optional parameter for htaccess. it requires 'user' parameter not be empty  
+                user: "username"  # Optional parameter for http basic auth, can not be empty if defined  
+                password: "password" # Optional parameter for http basic auth 
             blocks:
                 prepand:
-                    headline: "body"
+                    headline: "body" # add block "body" as first child of html element "headline"
                 append:
-                    stylesheets: "head"
-                    javascripts: "body"
+                    stylesheets: "head" # add block "stylesheets" as last child of html element "head"
+                    javascripts: "body" # add block "javascripts" as last child of html element "body"
                 replace:
-                    title: "%title%"
-                    content: "%content%"
+                    title: "%title%" # replace string "%title%" with block "title"
+                    content: "$$content$$" # replace string "$$content$$" with block "content"
 ```
 
 ### Example (from config above):
@@ -137,8 +137,8 @@ The Bundle provide some ways to extend or change the default implementation.
 
 ### Source Loader
 Source loaders define how to get the html. The default source loader uses "Guzzle" to call the given url via http "GET" method.
-If you need a different loading process, for example with authentication, simply implement `SourceLoaderInterface` and register 
-your source loader via service container:
+If you need a different loading process, for example with custom authentication, simply implement `SourceLoaderInterface` and register 
+your source loader via the service container for a configured layout:
 
 ```yml
 # services.yml
@@ -146,12 +146,12 @@ services:
     app.source_loader:
         class: AppBundle\SourceLoader\YourSourceLoader
         tags:
-            - { name: "external_layout.source_loader" }
+            - { name: "external_layout.source_loader", layout: "your_layout" }
 ```
 
 ### Block Builder
 Block builders define how to replace, prepend or append twig blocks in the given html. If you need a custom way, simply
-implement `BlockBuilderInterface` and register your block builder via service container:
+implement `BlockBuilderInterface` and register your block builder via service container for a configured layout:
 
 ```yml
 # services.yml
@@ -159,7 +159,7 @@ services:
     app.block_builder:
         class: AppBundle\BlockBuilder\YourBlockBuilder
         tags:
-            - { name: "external_layout.block_builder" }
+            - { name: "external_layout.block_builder", layout: "your_layout" }
 ```
 
 ### Events
