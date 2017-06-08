@@ -8,7 +8,6 @@ use Enm\Bundle\ExternalLayoutBundle\Events;
 use Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry;
 use GuzzleHttp\Psr7\Uri;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @author Philipp Marien <marien@eosnewmedia.de>
@@ -145,22 +144,18 @@ class LayoutService
             ->getBlockBuilder($this->layout);
 
         foreach ($prepend as $block => $selector) {
-            $this->html->setHtml(
-                $builder->prependBlock(
-                    $this->html->getHtml(),
-                    $selector,
-                    $block
-                )
+            $builder->prependBlock(
+                $this->html->getHtml(),
+                $selector,
+                $block
             );
         }
 
         foreach ($append as $block => $selector) {
-            $this->html->setHtml(
-                $builder->appendBlock(
-                    $this->html->getHtml(),
-                    $selector,
-                    $block
-                )
+            $builder->appendBlock(
+                $this->html->getHtml(),
+                $selector,
+                $block
             );
         }
 
@@ -177,12 +172,10 @@ class LayoutService
         $builder = $this->getBlockBuilderRegistry()
             ->getBlockBuilder($this->layout);
         foreach ($config as $block => $placeholder) {
-            $this->html->setHtml(
-                $builder->replaceWithBlock(
-                    $this->html->getHtml(),
-                    $placeholder,
-                    $block
-                )
+            $builder->replaceWithBlock(
+                $this->html->getHtml(),
+                $placeholder,
+                $block
             );
         }
 
@@ -200,8 +193,7 @@ class LayoutService
             $destinationDir .= '/';
         }
 
-        $fs = new Filesystem();
-        $fs->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml());
+        $this->html->getHtml()->saveHTMLFile($destinationDir . $this->layout . '.html.twig');
 
         return $this;
     }
