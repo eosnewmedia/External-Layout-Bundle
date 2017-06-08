@@ -1,5 +1,7 @@
 External-Layout-Bundle
 ======================
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b6266ec0-d13c-4558-8c74-772f97c18da6/mini.png)](https://insight.sensiolabs.com/projects/b6266ec0-d13c-4558-8c74-772f97c18da6)
+
 This bundle loads html layouts from remote, convert the layouts to twig templates and store it for local usage.
 
 ## Installation
@@ -83,7 +85,20 @@ The layout section can hold any number of layout configuration.
 
 Each layout has its own configuration under a name which will be used as template name.
 
-For example `your_layout` will become the template file `EnmExternalLayoutBundle::your_layout.html.twig`.
+#### Destination
+The destination have to be an absolute path where the bundle should create your layout files.
+
+For example: 
+
+```yml
+enm_external_layout:
+    layouts:
+        layout:
+            destination: '%kernel.root_dir%/Resources/views/remote'
+        #...
+```
+
+will store your template in `app/Resources/views/remote/layout.html.twig` which will become the template `:remote:layout.html.twig` in symfony.
 
 #### Source
 The source section configures where to find and load the layout from.
@@ -113,7 +128,7 @@ This command get the configs and create a twig template file for each configured
 # Create all templates
 bin/console enm:external-layout:create
 
-# Create the template "EnmExternalLayoutBundle::your_layout.html.twig"
+# Create the template "your_layout.html.twig"
 bin/console enm:external-layout:create --layout=your_layout
 ```
 
