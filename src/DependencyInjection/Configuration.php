@@ -1,4 +1,5 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -19,18 +20,20 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $builder = new TreeBuilder();
-        $root    = $builder->root('enm_external_layout')->children();
-        
+        $root = $builder->root('enm_external_layout')->children();
+
         /** @var ArrayNodeDefinition $layouts */
         $layouts = $root->arrayNode('layouts')
-                        ->useAttributeAsKey('name')
-                        ->prototype('array');
-        $layout  = $layouts->children();
-        
+            ->useAttributeAsKey('name')
+            ->prototype('array');
+        $layout = $layouts->children();
+
+        $layout->scalarNode('destination')->isRequired()->cannotBeEmpty();
+
         $source = $layout->arrayNode('source')->children();
         $source->enumNode('scheme')
-               ->defaultValue('http')
-               ->values(['http', 'https']);
+            ->defaultValue('http')
+            ->values(['http', 'https']);
         $source->scalarNode('host')->isRequired()->cannotBeEmpty();
         $source->scalarNode('path')->defaultValue('/');
 
@@ -39,18 +42,18 @@ class Configuration implements ConfigurationInterface
 
         $blocks = $layout->arrayNode('blocks')->children();
         $blocks->arrayNode('prepend')
-               ->useAttributeAsKey('name')
-               ->prototype('scalar')
-               ->cannotBeEmpty();
+            ->useAttributeAsKey('name')
+            ->prototype('scalar')
+            ->cannotBeEmpty();
         $blocks->arrayNode('append')
-               ->useAttributeAsKey('name')
-               ->prototype('scalar')
-               ->cannotBeEmpty();
+            ->useAttributeAsKey('name')
+            ->prototype('scalar')
+            ->cannotBeEmpty();
         $blocks->arrayNode('replace')
-               ->useAttributeAsKey('name')
-               ->prototype('scalar')
-               ->cannotBeEmpty();
-        
+            ->useAttributeAsKey('name')
+            ->prototype('scalar')
+            ->cannotBeEmpty();
+
         return $builder;
     }
 }

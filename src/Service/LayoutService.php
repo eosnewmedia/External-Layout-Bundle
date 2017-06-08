@@ -1,4 +1,5 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle\Service;
 
 use Enm\Bundle\ExternalLayoutBundle\BlockBuilder\BlockBuilderRegistry;
@@ -46,11 +47,14 @@ class LayoutService
      * @param BlockBuilderRegistry $blockBuilderRegistry
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(SourceLoaderRegistry $sourceLoaderRegistry, BlockBuilderRegistry $blockBuilderRegistry, EventDispatcherInterface $dispatcher)
-    {
+    public function __construct(
+        SourceLoaderRegistry $sourceLoaderRegistry,
+        BlockBuilderRegistry $blockBuilderRegistry,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->sourceLoaderRegistry = $sourceLoaderRegistry;
         $this->blockBuilderRegistry = $blockBuilderRegistry;
-        $this->dispatcher           = $dispatcher;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -103,7 +107,7 @@ class LayoutService
         $this->getDispatcher()
             ->dispatch(Events::HTML_MANIPULATED, $this->html);
 
-        $this->dumpHtmlToFile();
+        $this->dumpHtmlToFile($config['destination']);
 
         return $this;
     }
@@ -186,15 +190,18 @@ class LayoutService
     }
 
     /**
+     * @param  $destinationDir
      * @return $this
      * @throws \Exception
      */
-    private function dumpHtmlToFile()
+    private function dumpHtmlToFile($destinationDir)
     {
-        $file = __DIR__.'/../Resources/views/'.$this->layout.'.html.twig';
+        if (substr($destinationDir, -1) !== '/') {
+            $destinationDir .= '/';
+        }
 
         $fs = new Filesystem();
-        $fs->dumpFile($file, $this->html->getHtml());
+        $fs->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml());
 
         return $this;
     }

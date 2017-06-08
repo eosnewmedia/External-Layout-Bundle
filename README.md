@@ -28,8 +28,9 @@ The bundle have to be configured via the global `config.yml` like this:
 ```yml 
 enm_external_layout:
     layouts:
-        # example config for template "EnmExternalLayoutBundle::your_layout_name.html.twig"
+        # example config for template ":remote:your_layout_name.html.twig"
         your_layout_name:
+            destination: '%kernel.root_dir%/Resources/views/remote' # location where your template will be created
             source:
                 scheme: "http" # scheme can be "http" or "https". "http" is the default
                 host: "www.your-domain.de"
