@@ -36,18 +36,24 @@ class UrlPathListener
 
         /** @var \DOMElement $anchor */
         foreach ($dom->getElementsByTagName('a') as $anchor) {
-            $this->replaceHref($anchor, 'href', $host);
+            $this->replaceElementAttributeWithAbsoluteUri($anchor, 'href', $host);
         }
 
         /** @var \DOMElement $anchor */
         foreach ($dom->getElementsByTagName('link') as $anchor) {
-            $this->replaceHref($anchor, 'href', $host);
+            $this->replaceElementAttributeWithAbsoluteUri($anchor, 'href', $host);
         }
-
 
         /** @var \DOMElement $anchor */
         foreach ($dom->getElementsByTagName('img') as $anchor) {
-            $this->replaceHref($anchor, 'src', $host);
+            $this->replaceElementAttributeWithAbsoluteUri($anchor, 'src', $host);
+        }
+
+        $xPath = new \DOMXPath($dom);
+        /** @var \DOMComment[] $comments */
+        $comments = $xPath->query('//comment()');
+        foreach ($comments as $comment) {
+            $this->replaceCommentWithAbsoluteUri($comment, $host);
         }
     }
 
@@ -58,18 +64,49 @@ class UrlPathListener
      *
      * @return void
      */
-    protected function replaceHref(\DOMElement $element, $attribute, $host)
+    protected function replaceElementAttributeWithAbsoluteUri(\DOMElement $element, $attribute, $host)
     {
-        $link = $element->getAttribute($attribute);
+        $uri = $element->getAttribute($attribute);
 
-        $components = parse_url($link);
+        $uri = $this->convertToAbsoluteUri($host, $uri);
+
+        $element->setAttribute($attribute, $uri);
+    }
+
+    /**
+     * @param \DOMComment $comment
+     * @param string $host
+     * @return void
+     */
+    protected function replaceCommentWithAbsoluteUri(\DOMComment $comment, $host)
+    {
+        if (preg_match_all('/(href|src)=\"([a-zA-Z0-9\-\/]+\.js)\"/', $comment->textContent, $matches)) {
+            /** @var array $uris */
+            $uris = array_key_exists(2, $matches) && is_array($matches[2]) ? $matches[2] : [];
+            foreach ($uris as $uri) {
+                $comment->textContent = str_replace(
+                    $uri,
+                    $this->convertToAbsoluteUri($host, $uri),
+                    $comment->textContent
+                );
+            }
+        }
+    }
+
+    /**
+     * @param $host
+     * @param $uri
+     * @return string
+     */
+    protected function convertToAbsoluteUri($host, $uri)
+    {
+        $components = parse_url($uri);
         $noScheme = !array_key_exists('scheme', $components);
         $noHost = !array_key_exists('host', $components);
 
         if ($noScheme && $noHost) {
-            $link = $host . (strpos($link, '/') !== 0 ? '/' : '') . $link;
+            $uri = $host . (strpos($uri, '/') !== 0 ? '/' : '') . $uri;
         }
-
-        $element->setAttribute($attribute, $link);
+        return $uri;
     }
 }

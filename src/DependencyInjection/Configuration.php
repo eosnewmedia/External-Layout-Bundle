@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
         $source->scalarNode('user')->defaultValue('');
         $source->scalarNode('password')->defaultNull();
 
-        $blocks = $layout->arrayNode('blocks')->children();
+        $blocks = $layout->arrayNode('blocks')->addDefaultsIfNotSet()->children();
         $blocks->arrayNode('prepend')
             ->useAttributeAsKey('name')
             ->prototype('scalar')
