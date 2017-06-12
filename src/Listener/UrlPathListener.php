@@ -85,7 +85,7 @@ class UrlPathListener
      */
     protected function replaceCommentWithAbsoluteUri(\DOMComment $comment, $host)
     {
-        if (preg_match_all('/(href|src)=\"([a-zA-Z0-9\-\/]+\.js)\"/', $comment->textContent, $matches)) {
+        if (preg_match_all('/(href|src)=\"([a-zA-Z0-9\-\/\.\?\#]+)\"/', $comment->textContent, $matches)) {
             /** @var array $uris */
             $uris = array_key_exists(2, $matches) && is_array($matches[2]) ? $matches[2] : [];
             foreach ($uris as $uri) {
