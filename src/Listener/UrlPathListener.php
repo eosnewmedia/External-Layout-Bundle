@@ -49,6 +49,11 @@ class UrlPathListener
             $this->replaceElementAttributeWithAbsoluteUri($anchor, 'src', $host);
         }
 
+        /** @var \DOMElement $anchor */
+        foreach ($dom->getElementsByTagName('script') as $anchor) {
+            $this->replaceElementAttributeWithAbsoluteUri($anchor, 'src', $host);
+        }
+
         $xPath = new \DOMXPath($dom);
         /** @var \DOMComment[] $comments */
         $comments = $xPath->query('//comment()');
