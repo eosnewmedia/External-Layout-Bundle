@@ -2,10 +2,12 @@
 
 namespace Enm\Bundle\ExternalLayoutBundle\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+
 /**
  * @author Philipp Marien <marien@eosnewmedia.de>
  */
-class HtmlStringEvent
+class HtmlStringEvent extends Event
 {
     /**
      * @var string
