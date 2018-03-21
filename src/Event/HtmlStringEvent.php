@@ -2,12 +2,10 @@
 
 namespace Enm\Bundle\ExternalLayoutBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 /**
  * @author Philipp Marien <marien@eosnewmedia.de>
  */
-class HtmlEvent extends Event
+class HtmlStringEvent
 {
     /**
      * @var string
@@ -15,7 +13,7 @@ class HtmlEvent extends Event
     private $layout;
 
     /**
-     * @var \DOMDocument
+     * @var string
      */
     private $html;
 
@@ -31,7 +29,7 @@ class HtmlEvent extends Event
         libxml_disable_entity_loader(true);
 
         $this->layout = $layout;
-        $this->setHtmlFromString($html);
+        $this->setHtml($html);
     }
 
     /**
@@ -43,7 +41,7 @@ class HtmlEvent extends Event
     }
 
     /**
-     * @return \DOMDocument
+     * @return string
      */
     public function getHtml()
     {
@@ -51,19 +49,14 @@ class HtmlEvent extends Event
     }
 
     /**
-     * @param \DOMDocument $html
-     */
-    public function setHtml(\DOMDocument $html)
-    {
-        $this->html = $html;
-    }
-
-    /**
      * @param string $html
+     *
+     * @return $this
      */
-    public function setHtmlFromString($html)
+    public function setHtml($html)
     {
-        $this->html = new \DOMDocument();
-        $this->html->loadHTML($html);
+        $this->html = (string)$html;
+
+        return $this;
     }
 }
