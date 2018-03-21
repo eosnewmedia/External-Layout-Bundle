@@ -4,6 +4,7 @@ namespace Enm\Bundle\ExternalLayoutBundle\Service;
 
 use Enm\Bundle\ExternalLayoutBundle\BlockBuilder\BlockBuilderRegistry;
 use Enm\Bundle\ExternalLayoutBundle\Event\HtmlEvent;
+use Enm\Bundle\ExternalLayoutBundle\Event\HtmlStringEvent;
 use Enm\Bundle\ExternalLayoutBundle\Events;
 use Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry;
 use GuzzleHttp\Psr7\Uri;
@@ -218,8 +219,11 @@ class LayoutService
             $destinationDir .= '/';
         }
 
+        $beforeDumpEvent = new HtmlStringEvent($this->layout, $this->html->getHtml()->saveHTML());
+        $this->getDispatcher()->dispatch(Events::HTML_BEFORE_DUMP, $beforeDumpEvent);
+
         $this->getFilesystem()
-            ->dumpFile($destinationDir . $this->layout . '.html.twig', $this->html->getHtml()->saveHTML());
+            ->dumpFile($destinationDir . $this->layout . '.html.twig', $beforeDumpEvent->getHtml());
 
         return $this;
     }

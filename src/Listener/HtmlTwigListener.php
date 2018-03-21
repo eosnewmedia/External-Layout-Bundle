@@ -2,7 +2,7 @@
 
 namespace Enm\Bundle\ExternalLayoutBundle\Listener;
 
-use Enm\Bundle\ExternalLayoutBundle\Event\HtmlEvent;
+use Enm\Bundle\ExternalLayoutBundle\Event\HtmlStringEvent;
 
 /**
  * @author Philipp Marien <marien@eosnewmedia.de>
@@ -10,13 +10,10 @@ use Enm\Bundle\ExternalLayoutBundle\Event\HtmlEvent;
 class HtmlTwigListener
 {
     /**
-     * @param HtmlEvent $event
+     * @param HtmlStringEvent $event
      */
-    public function replaceTwigTags(HtmlEvent $event)
+    public function replaceTwigTags(HtmlStringEvent $event)
     {
-        $event->getHtml()
-            ->loadHTML(
-                str_replace(['<twig>', '</twig>'], '', $event->getHtml()->saveHTML())
-            );
+        $event->setHtml(str_replace(['<twig>', '</twig>'], '', $event->getHtml()));
     }
 }

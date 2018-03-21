@@ -6,23 +6,23 @@
 
     <services>
         <service id="enm.external_layout.source_loader_registry"
-                 class="Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry"/>
+                 class="Enm\Bundle\ExternalLayoutBundle\SourceLoader\SourceLoaderRegistry" public="false"/>
 
         <service id="enm.external_layout.block_builder_registry"
-                 class="Enm\Bundle\ExternalLayoutBundle\BlockBuilder\BlockBuilderRegistry"/>
+                 class="Enm\Bundle\ExternalLayoutBundle\BlockBuilder\BlockBuilderRegistry" public="false"/>
 
         <service id="enm.external_layout.html_twig_listener"
-                 class="Enm\Bundle\ExternalLayoutBundle\Listener\HtmlTwigListener">
-            <tag name="kernel.event_listener" event="enm.external_layout.html_manipulated" method="replaceTwigTags"/>
+                 class="Enm\Bundle\ExternalLayoutBundle\Listener\HtmlTwigListener" public="true">
+            <tag name="kernel.event_listener" event="enm.external_layout.html_before_dump" method="replaceTwigTags"/>
         </service>
 
         <service id="enm.external_layout.url_path_listener"
-                 class="Enm\Bundle\ExternalLayoutBundle\Listener\UrlPathListener">
+                 class="Enm\Bundle\ExternalLayoutBundle\Listener\UrlPathListener" public="true">
             <argument>%enm.external_layout.layouts%</argument>
             <tag name="kernel.event_listener" event="enm.external_layout.html_loaded" method="onHtmlLoaded"/>
         </service>
 
-        <service id="enm.external_layout" class="Enm\Bundle\ExternalLayoutBundle\Service\LayoutService">
+        <service id="enm.external_layout" class="Enm\Bundle\ExternalLayoutBundle\Service\LayoutService" public="false">
             <argument type="service" id="enm.external_layout.source_loader_registry"/>
             <argument type="service" id="enm.external_layout.block_builder_registry"/>
             <argument type="service" id="event_dispatcher"/>
@@ -32,7 +32,7 @@
         </service>
 
         <service id="enm.external_layout.command.create_layouts"
-                 class="Enm\Bundle\ExternalLayoutBundle\Command\CreateLayoutsCommand">
+                 class="Enm\Bundle\ExternalLayoutBundle\Command\CreateLayoutsCommand" public="true">
             <argument type="service" id="enm.external_layout"/>
             <argument>%enm.external_layout.layouts%</argument>
             <tag name="console.command"/>

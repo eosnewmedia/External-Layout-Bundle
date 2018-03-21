@@ -164,6 +164,6 @@ services:
 
 ### Events
 There are currently two events which can be used to manipulate html while processing:
-1. `Events::HTML_LOADED` (`enm.external_layout.html_loaded`): Triggered after html was loaded from source. Gives you an `HtmlEvent`.
-1. `Events::HTML_MANIPULATED` (`enm.external_layout.html_manipulated`): Triggered after html was manipulated by block builder. Gives you an `HtmlEvent`.
-
+1. `Events::HTML_LOADED` (`enm.external_layout.html_loaded`): Triggered after html was loaded from source. Gives you a `HtmlEvent`.
+1. `Events::HTML_MANIPULATED` (`enm.external_layout.html_manipulated`): Triggered after html was manipulated by block builder. Gives you a `HtmlEvent`.
+1. `Events::HTML_BEFORE_DUMP` (`enm.external_layout.html_before_dump`): Triggered before html is dumped to file. Gives you a `HtmlStringEvent`.
