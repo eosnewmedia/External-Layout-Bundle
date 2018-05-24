@@ -20,7 +20,7 @@
     "ext-xml": "*",
     "symfony/framework-bundle": "^3.4|^4.0",
     "enm/external-layout": "^1.0",
-    "symfony/console": "^4.0"
+    "symfony/console": "^3.0|^4.0"
   },
   "require-dev": {
     "e-moe/guzzle6-bundle": "^1.2"
