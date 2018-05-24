@@ -1,9 +1,18 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle\DependencyInjection;
 
-use Symfony\Component\Config\FileLocator;
+use Enm\Bundle\ExternalLayoutBundle\Command\CreateLayoutsCommand;
+use Enm\ExternalLayout\Finisher\FinisherChain;
+use Enm\ExternalLayout\Finisher\WorkingTagFinisher;
+use Enm\ExternalLayout\LayoutCreator;
+use Enm\ExternalLayout\Loader\GuzzleLoader;
+use Enm\ExternalLayout\Loader\LoaderInterface;
+use Enm\ExternalLayout\Manipulator\ManipulatorChain;
+use Enm\ExternalLayout\Manipulator\ManipulatorInterface;
+use Enm\ExternalLayout\Manipulator\TwigManipulator;
+use Enm\ExternalLayout\Manipulator\UrlManipulator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 /**
@@ -19,17 +28,27 @@ class EnmExternalLayoutExtension extends ConfigurableExtension
      *
      * @throws \Exception
      */
-    protected function loadInternal(array $mergedConfig, ContainerBuilder $container)
+    protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
-        $container->setParameter(
-          'enm.external_layout.layouts',
-          $mergedConfig['layouts']
-        );
-        
-        $loader = new XmlFileLoader(
-          $container,
-          new FileLocator(__DIR__.'/../Resources/config')
-        );
-        $loader->load('services.xml');
+        if ($mergedConfig['useGuzzle']) {
+            $container->autowire(GuzzleLoader::class)->setPublic(false);
+            $container->setAlias(LoaderInterface::class, GuzzleLoader::class)->setPublic(false);
+        }
+
+        $container->autowire(ManipulatorChain::class)->setPublic(false);
+        $container->setAlias(ManipulatorInterface::class, ManipulatorChain::class)->setPublic(false);
+
+        $container->autowire(FinisherChain::class)->setPublic(false);
+        $container->setAlias(ManipulatorInterface::class, FinisherChain::class)->setPublic(false);
+
+        $container->autowire(TwigManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
+        $container->autowire(UrlManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
+        $container->autowire(WorkingTagFinisher::class)->setPublic(false)->addTag('external_layout.finisher');
+
+        $container->autowire(LayoutCreator::class)->setPublic(false);
+
+        $container->autowire(CreateLayoutsCommand::class)
+            ->addArgument($mergedConfig['layouts'])
+            ->setPublic(true)->addTag('console.command');
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 namespace Enm\Bundle\ExternalLayoutBundle;
 
-use Enm\Bundle\ExternalLayoutBundle\DependencyInjection\Compiler\BlockBuilderPass;
-use Enm\Bundle\ExternalLayoutBundle\DependencyInjection\Compiler\SourceLoaderPass;
+use Enm\Bundle\ExternalLayoutBundle\DependencyInjection\Compiler\FinisherPass;
+use Enm\Bundle\ExternalLayoutBundle\DependencyInjection\Compiler\ManipulatorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -21,10 +22,10 @@ class EnmExternalLayoutBundle extends Bundle
      *
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
-        $container->addCompilerPass(new SourceLoaderPass());
-        $container->addCompilerPass(new BlockBuilderPass());
+        $container->addCompilerPass(new ManipulatorPass());
+        $container->addCompilerPass(new FinisherPass());
     }
 }
