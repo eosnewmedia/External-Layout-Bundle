@@ -4,6 +4,7 @@ namespace Enm\Bundle\ExternalLayoutBundle\DependencyInjection;
 
 use Enm\Bundle\ExternalLayoutBundle\Command\CreateLayoutsCommand;
 use Enm\ExternalLayout\Finisher\FinisherChain;
+use Enm\ExternalLayout\Finisher\FinisherInterface;
 use Enm\ExternalLayout\Finisher\WorkingTagFinisher;
 use Enm\ExternalLayout\LayoutCreator;
 use Enm\ExternalLayout\Loader\GuzzleLoader;
@@ -39,7 +40,7 @@ class EnmExternalLayoutExtension extends ConfigurableExtension
         $container->setAlias(ManipulatorInterface::class, ManipulatorChain::class)->setPublic(false);
 
         $container->autowire(FinisherChain::class)->setPublic(false);
-        $container->setAlias(ManipulatorInterface::class, FinisherChain::class)->setPublic(false);
+        $container->setAlias(FinisherInterface::class, FinisherChain::class)->setPublic(false);
 
         $container->autowire(TwigManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
         $container->autowire(UrlManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
