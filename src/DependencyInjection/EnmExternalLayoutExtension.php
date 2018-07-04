@@ -9,6 +9,7 @@ use Enm\ExternalLayout\Finisher\WorkingTagFinisher;
 use Enm\ExternalLayout\LayoutCreator;
 use Enm\ExternalLayout\Loader\GuzzleLoader;
 use Enm\ExternalLayout\Loader\LoaderInterface;
+use Enm\ExternalLayout\Manipulator\BaseUrlManipulator;
 use Enm\ExternalLayout\Manipulator\ManipulatorChain;
 use Enm\ExternalLayout\Manipulator\ManipulatorInterface;
 use Enm\ExternalLayout\Manipulator\TwigManipulator;
@@ -44,6 +45,7 @@ class EnmExternalLayoutExtension extends ConfigurableExtension
 
         $container->autowire(TwigManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
         $container->autowire(UrlManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
+        $container->autowire(BaseUrlManipulator::class)->setPublic(false)->addTag('external_layout.manipulator');
         $container->autowire(WorkingTagFinisher::class)->setPublic(false)->addTag('external_layout.finisher');
 
         $container->autowire(LayoutCreator::class)->setPublic(false);

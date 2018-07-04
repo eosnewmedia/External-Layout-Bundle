@@ -19,7 +19,7 @@
     "php": ">=7.2",
     "ext-xml": "*",
     "symfony/framework-bundle": "^3.4|^4.0",
-    "enm/external-layout": "^1.0",
+    "enm/external-layout": "^1.1",
     "symfony/console": "^3.0|^4.0"
   },
   "require-dev": {
